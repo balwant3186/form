@@ -325,7 +325,7 @@ const AIAgentForm = () => {
       </label>
 
       <div
-        className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center bg-gray-800 relative"
+        className="border-2 border-dashed border-gray-600 rounded-lg px-8 py-4 text-center bg-gray-800 relative"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -334,7 +334,7 @@ const AIAgentForm = () => {
             <img
               src={formData.imagePreview}
               alt="Token preview"
-              className="max-h-[11.5rem] mx-auto rounded-lg"
+              className="max-h-[9.125rem] mx-auto rounded-lg"
             />
             <button
               onClick={() =>
@@ -351,11 +351,11 @@ const AIAgentForm = () => {
             </button>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-1">
             <div className="flex justify-center">
               <Camera className="w-12 h-12 text-gray-400" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <p className="text-lg text-gray-300">
                 Upload your token's visual manifestation
               </p>
@@ -520,7 +520,7 @@ const AIAgentForm = () => {
                     </label>
                     <textarea
                       className="w-full p-2 bg-gray-900 border border-gray-700 rounded-md text-white placeholder-gray-500 resize-none"
-                      rows="10"
+                      rows="7"
                       value={formData.description}
                       onChange={(e) =>
                         setFormData((prev) => ({
