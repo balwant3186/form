@@ -217,6 +217,7 @@ const AIAgentForm = () => {
           .join(","),
         tradingStyle: formData.tradeScore,
         additionalTraits: formData.additionalTraits,
+        customPersonality: formData.customPersonality,
       };
 
       const formDataLocal = new FormData();
