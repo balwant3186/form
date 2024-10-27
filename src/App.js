@@ -21,6 +21,7 @@ import {
   User,
 } from "lucide-react";
 import Thanks from "./Thanks";
+import { apiPostRequest } from "./utils/api";
 
 const AIAgentForm = () => {
   const [formData, setFormData] = useState({
@@ -199,11 +200,43 @@ const AIAgentForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    setShowForm(false);
-    // Add your form submission logic here
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (isDisabled) return;
+
+      const registerData = {
+        userName: formData.telegramId,
+        twitterId: formData.twitterId,
+        tokenName: formData.name,
+        tokenSymbol: formData.ticker,
+        tokenDescription: formData.description,
+        aiType: formData.aiTypeScore,
+        aiPersonalities: formData.selectedPersonalities
+          .map((p) => p.id)
+          .join(","),
+        tradingStyle: formData.tradeScore,
+        additionalTraits: formData.additionalTraits,
+      };
+
+      const formDataLocal = new FormData();
+
+      Object.keys(registerData).forEach((key) => {
+        formDataLocal.append(key, registerData[key]);
+      });
+
+      // Check if `formData.image` is a valid File object
+      if (formData.image && formData.image instanceof File) {
+        formDataLocal.append("file", formData.image);
+      } else {
+        console.warn("formData.image is not a valid File object");
+      }
+
+      await apiPostRequest("aiMemecoin/memecoin/register", formDataLocal);
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const togglePersonality = (personality) => {
@@ -333,6 +366,16 @@ const AIAgentForm = () => {
   const currentTradeStyle = getTradeStyle(formData.tradeScore);
   const currentAIType = getAIType(formData.aiTypeScore);
 
+  const isDisabled =
+    !formData.telegramId?.trim() ||
+    !formData.twitterId?.trim() ||
+    !formData.name?.trim() ||
+    !formData.ticker?.trim() ||
+    !formData.description?.trim() ||
+    formData.selectedPersonalities.length === 0 ||
+    formData.tradeScore === null ||
+    formData.aiTypeScore === null;
+
   return (
     <div className="bg-[#1a1a2e]">
       {showForm && (
@@ -356,7 +399,7 @@ const AIAgentForm = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                       <MessageCircle className="w-4 h-4 text-gray-400" />
-                      Telegram ID
+                      Telegram ID <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -375,7 +418,7 @@ const AIAgentForm = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                       <Twitter className="w-4 h-4 text-blue-400" />
-                      Twitter ID
+                      Twitter ID <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -403,7 +446,7 @@ const AIAgentForm = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                       <Pencil className="w-4 h-4 text-yellow-400" />
-                      Token Name
+                      Token Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -421,7 +464,7 @@ const AIAgentForm = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-green-400" />
-                      Token Symbol
+                      Token Symbol <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -443,7 +486,7 @@ const AIAgentForm = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-purple-400" />
-                      Token Description
+                      Token Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       className="w-full p-2 bg-gray-900 border border-gray-700 rounded-md text-white placeholder-gray-500 resize-none"
@@ -505,7 +548,8 @@ const AIAgentForm = () => {
                 {/* AI Personalities */}
                 <div className="space-y-3">
                   <label className="block text-lg font-medium text-gray-300">
-                    Select AI Personalities (Multiple)
+                    Select AI Personalities (Multiple){" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {AI_PERSONALITIES.map((personality) => (
@@ -602,7 +646,10 @@ const AIAgentForm = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition-all duration-300 font-medium flex items-center justify-center gap-2"
+                disabled={isDisabled}
+                className={`w-full bg-gradient-to-r cursor-pointer from-purple-600 to-pink-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition-all duration-300 font-medium flex items-center justify-center gap-2 ${
+                  isDisabled ? "opacity-50" : ""
+                }`}
               >
                 <Send className="w-5 h-5 text-yellow-300" />
                 Submit
