@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import Thanks from "./Thanks";
 import { apiPostRequest } from "./utils/api";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AIAgentForm = () => {
   const [formData, setFormData] = useState({
@@ -203,7 +205,20 @@ const AIAgentForm = () => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      if (isDisabled) return;
+      if (isDisabled) {
+        toast.error("Please fill all required fields!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+        return;
+      }
 
       const registerData = {
         userName: formData.telegramId,
@@ -304,9 +319,9 @@ const AIAgentForm = () => {
 
   const ImageUploadSection = () => (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+      <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
         <ImagePlus className="w-4 h-4 text-blue-500" />
-        Token Hologram (Optional)
+        Token Hologram <span className="text-red-500">*</span>
       </label>
 
       <div
@@ -375,30 +390,44 @@ const AIAgentForm = () => {
     !formData.description?.trim() ||
     formData.selectedPersonalities.length === 0 ||
     formData.tradeScore === null ||
-    formData.aiTypeScore === null;
+    formData.aiTypeScore === null ||
+    !formData.image;
 
   return (
     <div className="bg-[#1a1a2e]">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        limit={1}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       {showForm && (
         <div className="max-w-6xl mx-auto p-4">
           <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
             <div className="bg-gradient-to-r from-purple-700 to-pink-600 p-4">
               <h1 className="text-xl font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-6 h-6 text-yellow-400" />
-                Configure Token
+                Agentic Meme Token
               </h1>
             </div>
 
             <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-6">
               {/* Social IDs */}
               <div className="bg-gray-800 rounded-lg shadow-md border border-gray-700 space-y-6 p-4 md:p-6">
-                <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-gray-400" /> User Info
+                <h2 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5 text-gray-400" /> Creator Info
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Telegram ID */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                       <MessageCircle className="w-4 h-4 text-gray-400" />
                       Telegram ID <span className="text-red-500">*</span>
                     </label>
@@ -417,7 +446,7 @@ const AIAgentForm = () => {
                   </div>
                   {/* Twitter ID */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                       <Twitter className="w-4 h-4 text-blue-400" />
                       Twitter ID <span className="text-red-500">*</span>
                     </label>
@@ -438,14 +467,14 @@ const AIAgentForm = () => {
               </div>
 
               <div className="p-4 md:p-6 bg-gray-800 rounded-lg border border-gray-700 shadow-md space-y-6">
-                <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
                   <Pencil className="w-5 h-5 text-yellow-400" /> Token Details
                 </h2>
 
                 {/* Token Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                       <Pencil className="w-4 h-4 text-yellow-400" />
                       Token Name <span className="text-red-500">*</span>
                     </label>
@@ -463,7 +492,7 @@ const AIAgentForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-green-400" />
                       Token Symbol <span className="text-red-500">*</span>
                     </label>
@@ -485,7 +514,7 @@ const AIAgentForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Token Description */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-purple-400" />
                       Token Description <span className="text-red-500">*</span>
                     </label>
@@ -511,8 +540,8 @@ const AIAgentForm = () => {
               <div className="space-y-6 p-4 md:p-6 bg-gray-800 rounded-lg border border-gray-700 shadow-md ">
                 {/* AI Type */}
                 <div className="space-y-3">
-                  <label className="block text-lg font-medium text-gray-300">
-                    AI Type
+                  <label className="block text-lg font-semibold text-gray-300">
+                    AI Type <span className="text-red-500">*</span>
                   </label>
                   <div
                     className={`p-4 rounded-lg ${currentAIType.color} bg-opacity-20`}
@@ -548,7 +577,7 @@ const AIAgentForm = () => {
 
                 {/* AI Personalities */}
                 <div className="space-y-3">
-                  <label className="block text-lg font-medium text-gray-300">
+                  <label className="block text-lg font-semibold text-gray-300">
                     Select AI Personalities (Multiple){" "}
                     <span className="text-red-500">*</span>
                   </label>
@@ -568,12 +597,13 @@ const AIAgentForm = () => {
 
                 {/* Custom Personality */}
                 <div className="space-y-3">
-                  <label className="block text-lg font-medium text-gray-300 mb-2">
+                  <label className="block text-lg font-semibold text-gray-300 mb-2">
                     Add Custom Personality
                   </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
+                      placeholder="Donald Trump"
                       value={formData.customPersonality}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -581,7 +611,6 @@ const AIAgentForm = () => {
                           customPersonality: e.target.value,
                         }))
                       }
-                      placeholder="Enter personality name..."
                       className="flex-1 p-2 bg-gray-900 border border-gray-700 rounded-md text-white placeholder-gray-500"
                     />
                   </div>
@@ -589,8 +618,8 @@ const AIAgentForm = () => {
 
                 {/* Trading Style */}
                 <div className="space-y-3">
-                  <label className="block text-lg font-medium text-gray-300">
-                    Trading Style
+                  <label className="block text-lg font-semibold text-gray-300">
+                    Trading Style <span className="text-red-500">*</span>
                   </label>
                   <div
                     className={`p-4 rounded-lg ${currentTradeStyle.color} bg-opacity-20`}
@@ -626,7 +655,7 @@ const AIAgentForm = () => {
               </div>
               {/* Additional Traits */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-2">
+                <label className="block text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
                   <Plus className="w-4 h-4 text-pink-500" />
                   Additional Traits
                 </label>
@@ -647,7 +676,7 @@ const AIAgentForm = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isDisabled}
+                // disabled={isDisabled}
                 className={`w-full bg-gradient-to-r cursor-pointer from-purple-600 to-pink-600 text-white py-2 px-4 rounded-md hover:opacity-90 transition-all duration-300 font-medium flex items-center justify-center gap-2 ${
                   isDisabled ? "opacity-50" : ""
                 }`}
